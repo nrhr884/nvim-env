@@ -132,6 +132,7 @@ if dein#load_state('~/.cache/dein')
   call dein#add('itchyny/lightline.vim')
   call dein#add('tpope/vim-surround')
   call dein#add('cohama/lexima.vim')
+  call dein#add('zebult/auto-gtags.vim')
   if !has('nvim')
     call dein#add('roxma/nvim-yarp')
     call dein#add('roxma/vim-hug-neovim-rpc')
@@ -145,11 +146,12 @@ if dein#check_install()
   call dein#install()
 endif
 
-nnoremap ua :DeniteCursorWord -buffer-name=gtags_context gtags_context<cr>
-nnoremap ud :DeniteCursorWord -buffer-name=gtags_def gtags_def<cr>
-nnoremap ur :DeniteCursorWord -buffer-name=gtags_ref gtags_ref<cr>
-nnoremap ucg :DeniteCursorWord -buffer-name=gtags_grep gtags_grep<cr>
-nnoremap ug :Denite -buffer-name=gtags_grep gtags_grep:
+call denite#custom#option('default','mode','normal')
+nnoremap ua :DeniteCursorWord -mode=normal -buffer-name=gtags_context gtags_context<cr>
+nnoremap ud :DeniteCursorWord -mode=normal -buffer-name=gtags_def gtags_def<cr>
+nnoremap ur :DeniteCursorWord -mode=normal -buffer-name=gtags_ref gtags_ref<cr>
+nnoremap ucg :DeniteCursorWord -mode=normal -buffer-name=gtags_grep gtags_grep<cr>
+nnoremap ug :Denite -mode=normal -buffer-name=gtags_grep gtags_grep:
 
 "deoplete
 let g:deoplete#enable_at_startup = 1
@@ -175,5 +177,8 @@ imap <expr><TAB>
  \    "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
 smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
 \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+
+"auto gtags
+let g:auto_gtags = 1
 
 filetype plugin indent on
