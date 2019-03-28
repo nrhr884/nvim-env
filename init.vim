@@ -117,12 +117,12 @@ if !isdirectory(s:dein_repo_dir)
 endif
 let &runtimepath = s:dein_repo_dir .",". &runtimepath
 
+let s:use_denite=0
 if dein#load_state('~/.cache/dein')
   call dein#begin('~/.cache/dein')
 
   call dein#add('~/.cache/dein/repos/github.com/Shougo/dein.vim')
   call dein#add('Shougo/deoplete.nvim')
-  call dein#add('Shougo/denite.nvim')
   call dein#add('Shougo/vimproc.vim', {
         \ 'build': {
         \     'windows' : 'tools\\update-dll-mingw',
@@ -136,7 +136,6 @@ if dein#load_state('~/.cache/dein')
   call dein#add('Shougo/neosnippet')
   call dein#add('Shougo/neosnippet-snippets')
   call dein#add('ctrlpvim/ctrlp.vim')
-  call dein#add('ozelentok/denite-gtags')
   call dein#add('deoplete-plugins/deoplete-jedi')
   call dein#add('thinca/vim-quickrun')
   call dein#add('itchyny/lightline.vim')
@@ -146,6 +145,15 @@ if dein#load_state('~/.cache/dein')
   call dein#add('tomasr/molokai')
   call dein#add('soramugi/auto-ctags.vim')
   call dein#add('tpope/vim-fugitive')
+
+  if s:use_denite
+    call dein#add('Shougo/denite.nvim')
+    call dein#add('ozelentok/denite-gtags')
+  else
+    call dein#add('Shougo/unite.vim')
+    call dein#add('hewes/unite-gtags')
+  endif
+
   if !has('nvim')
     call dein#add('roxma/nvim-yarp')
     call dein#add('roxma/vim-hug-neovim-rpc')
@@ -159,12 +167,21 @@ if dein#check_install()
   call dein#install()
 endif
 
-nnoremap ua :DeniteCursorWord -mode=normal -buffer-name=gtags_context gtags_context<cr>
-nnoremap ud :DeniteCursorWord -mode=normal -buffer-name=gtags_def gtags_def<cr>
-nnoremap ur :DeniteCursorWord -mode=normal -buffer-name=gtags_ref gtags_ref<cr>
-nnoremap ucg :DeniteCursorWord -mode=normal -buffer-name=gtags_grep gtags_grep<cr>
-nnoremap uo :Denite -buffer-name=denite_outline outline<cr>
-nnoremap ug :Denite -mode=normal -buffer-name=gtags_grep gtags_grep:
+if s:use_denite
+    nnoremap ua :DeniteCursorWord -mode=normal -buffer-name=gtags_context gtags_context<cr>
+    nnoremap ud :DeniteCursorWord -mode=normal -buffer-name=gtags_def gtags_def<cr>
+    nnoremap ur :DeniteCursorWord -mode=normal -buffer-name=gtags_ref gtags_ref<cr>
+    nnoremap ucg :DeniteCursorWord -mode=normal -buffer-name=gtags_grep gtags_grep<cr>
+    nnoremap uo :Denite -buffer-name=denite_outline outline<cr>
+    nnoremap ug :Denite -mode=normal -buffer-name=gtags_grep gtags_grep:
+else
+    noremap <silent>uo :Unite outline<CR>
+    noremap <silent>ub :Unite bookmark<CR>
+    noremap <silent>ud :Unite gtags/def<CR><c-r>=expand("<cword>")<CR><CR>
+    noremap <silent>ur :Unite gtags/ref<CR><c-r>=expand("<cword>")<CR><CR>
+    noremap <silent>ug :Unite gtags/grep<CR>
+    noremap <silent>ucg :Unite gtags/grep<CR><c-r>=expand("<cword>")<CR><CR>
+endif
 
 let g:python3_host_prog = $PYENV_ROOT.'/versions/3.6.8/bin/python'
 
