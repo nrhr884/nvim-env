@@ -101,6 +101,7 @@ autocmd MyAutoCmd FileType help,qf nnoremap <buffer> q <C-w>c
 
 let mapleader = "\<Space>"
 
+
 " quick-run
 nnoremap <C-e> :write<CR>:QuickRun -mode n<CR>
 
@@ -122,7 +123,16 @@ if dein#load_state('~/.cache/dein')
   call dein#add('~/.cache/dein/repos/github.com/Shougo/dein.vim')
   call dein#add('Shougo/deoplete.nvim')
   call dein#add('Shougo/denite.nvim')
-  call dein#add('Shougo/vimproc.vim',{'build':'make -f make_mac.mak'})
+  call dein#add('Shougo/vimproc.vim', {
+        \ 'build': {
+        \     'windows' : 'tools\\update-dll-mingw',
+        \     'cygwin'  : 'make -f make_cygwin.mak',
+        \     'mac'     : 'make -f make_mac.mak',
+        \     'linux'   : 'make',
+        \     'unix'    : 'gmake',
+        \    },
+        \ })
+  call dein#add('Shougo/vimproc.vim',{'build':'make'})
   call dein#add('Shougo/neosnippet')
   call dein#add('Shougo/neosnippet-snippets')
   call dein#add('ctrlpvim/ctrlp.vim')
@@ -133,6 +143,9 @@ if dein#load_state('~/.cache/dein')
   call dein#add('tpope/vim-surround')
   call dein#add('cohama/lexima.vim')
   call dein#add('zebult/auto-gtags.vim')
+  call dein#add('tomasr/molokai')
+  call dein#add('soramugi/auto-ctags.vim')
+  call dein#add('tpope/vim-fugitive')
   if !has('nvim')
     call dein#add('roxma/nvim-yarp')
     call dein#add('roxma/vim-hug-neovim-rpc')
@@ -146,12 +159,14 @@ if dein#check_install()
   call dein#install()
 endif
 
-call denite#custom#option('default','mode','normal')
 nnoremap ua :DeniteCursorWord -mode=normal -buffer-name=gtags_context gtags_context<cr>
 nnoremap ud :DeniteCursorWord -mode=normal -buffer-name=gtags_def gtags_def<cr>
 nnoremap ur :DeniteCursorWord -mode=normal -buffer-name=gtags_ref gtags_ref<cr>
 nnoremap ucg :DeniteCursorWord -mode=normal -buffer-name=gtags_grep gtags_grep<cr>
+nnoremap uo :Denite -buffer-name=denite_outline outline<cr>
 nnoremap ug :Denite -mode=normal -buffer-name=gtags_grep gtags_grep:
+
+let g:python3_host_prog = $PYENV_ROOT.'/versions/3.6.8/bin/python'
 
 "deoplete
 let g:deoplete#enable_at_startup = 1
@@ -180,5 +195,13 @@ smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
 
 "auto gtags
 let g:auto_gtags = 1
+
+"auto ctags
+let g:auto_ctags = 1
+
+"color
+colorscheme molokai
+let g:molokai_original = 1
+let g:rehash256 = 1
 
 filetype plugin indent on
